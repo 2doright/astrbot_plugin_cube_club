@@ -12,6 +12,8 @@ from .time_utils import TimeConvert
 
 from datetime import datetime
 import re
+import os
+from .render import get_renderer
 
 @register("cube_club", "CubeClub", "打乱成绩记录与排行插件", "1.1.0")
 class CubeClubPlugin(Star):
@@ -367,6 +369,27 @@ class CubeClubPlugin(Star):
             proj, stat = args[0], args[1]
             if stat in ("ao5", "mo3"): stat = "ao5/mo3"
             
+            # --- Image Generation ---
+            try:
+                data = RankQuery.get_rank_data(scope, rk_type, proj, stat)
+                if data["results"]:
+                    renderer = get_renderer()
+                    png_bytes = renderer.render_rank(data)
+                    
+                    # Save to a temporary file
+                    plugin_data_path = Path(get_astrbot_data_path()) / "plugin_data" / self.name
+                    if not plugin_data_path.exists():
+                        plugin_data_path.mkdir(parents=True, exist_ok=True)
+                    
+                    image_path = plugin_data_path / "temp_rank.png"
+                    image_path.write_bytes(png_bytes)
+                    
+                    yield event.image_result(str(image_path.absolute()))
+                    return
+            except Exception as e:
+                logger.warning(f"Image generation failed: {e}. Falling back to text.")
+            
+            # Fallback to text
             yield event.plain_result(RankQuery.get_rank_list(scope, rk_type, proj, stat))
         except Exception as e:
             logger.error(f"rk error: {e}")
