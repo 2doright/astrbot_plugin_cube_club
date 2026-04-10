@@ -1,27 +1,40 @@
-<svg width="640" height="{{ 180 + results|length * 80 }}" viewBox="0 0 640 {{ 180 + results|length * 80 }}" xmlns="http://www.w3.org/2000/svg">
+<svg width="800" height="{{ 200 + results|length * 96 }}" viewBox="0 0 800 {{ 200 + results|length * 96 }}" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- 渐变和滤镜定义 (无需修改) -->
+    <!-- 全局深邃背景渐变 -->
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0d1117" /><stop offset="100%" stop-color="#010409" />
+      <stop offset="0%" stop-color="#0d1117" />
+      <stop offset="100%" stop-color="#010409" />
     </linearGradient>
+
+    <!-- 排名专属卡片渐变背景 (金银铜) -->
     <linearGradient id="rowGold" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#2a2211" stop-opacity="0.8" /><stop offset="100%" stop-color="#161b22" stop-opacity="0.8" />
+      <stop offset="0%" stop-color="#2a2211" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#161b22" stop-opacity="0.8" />
     </linearGradient>
     <linearGradient id="rowSilver" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#1e293b" stop-opacity="0.8" /><stop offset="100%" stop-color="#161b22" stop-opacity="0.8" />
+      <stop offset="0%" stop-color="#1e293b" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#161b22" stop-opacity="0.8" />
     </linearGradient>
     <linearGradient id="rowBronze" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#3b2010" stop-opacity="0.8" /><stop offset="100%" stop-color="#161b22" stop-opacity="0.8" />
+      <stop offset="0%" stop-color="#3b2010" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#161b22" stop-opacity="0.8" />
     </linearGradient>
+
+    <!-- 奖牌徽章渐变 -->
     <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFDF73" /><stop offset="100%" stop-color="#D4AF37" />
+      <stop offset="0%" stop-color="#FFDF73" />
+      <stop offset="100%" stop-color="#D4AF37" />
     </linearGradient>
     <linearGradient id="silver" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#F8FAFC" /><stop offset="100%" stop-color="#94A3B8" />
+      <stop offset="0%" stop-color="#F8FAFC" />
+      <stop offset="100%" stop-color="#94A3B8" />
     </linearGradient>
     <linearGradient id="bronze" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FDBA74" /><stop offset="100%" stop-color="#B45309" />
+      <stop offset="0%" stop-color="#FDBA74" />
+      <stop offset="100%" stop-color="#B45309" />
     </linearGradient>
+    
+    <!-- 卡片泛光滤镜 (用于第一名奖牌) -->
     <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur stdDeviation="4" result="blur" />
       <feComposite in="SourceGraphic" in2="blur" operator="over" />
@@ -31,75 +44,73 @@
   <!-- 全局背景 -->
   <rect width="100%" height="100%" fill="url(#bgGrad)" />
 
-  <!-- 
-    ========================================================
-    激进优化 1: 大幅缩小画布和内容区域
-    - 画布宽度从 800px 减少到 640px (-20%)。
-    - 左右内边距调整为 30px，内容区宽度为 580px。
-    - 整体布局变得极为紧凑。
-    ========================================================
-  -->
+  <!-- 头部信息 -->
+  <text x="40" y="80" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="56" font-weight="900" fill="#f0f6fc" letter-spacing="2">{{ title }}</text>
+  <text x="42" y="125" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="28" font-weight="500" fill="#8b949e">{{ subtitle }}</text>
 
-  <!-- 头部信息 (适应新宽度) -->
-  <text x="30" y="70" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="48" font-weight="900" fill="#f0f6fc" letter-spacing="1.5">{{ title }}</text>
-  <text x="32" y="110" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="24" font-weight="500" fill="#8b949e">{{ subtitle }}</text>
-  <line x1="30" y1="140" x2="610" y2="140" stroke="#30363d" stroke-width="1.5" />
-
-  <!-- 
-    ========================================================
-    激进优化 2: 重新设计列表行，压缩信息间距
-    - 行高从 96px 减少到 80px，信息密度更高。
-    - 移除了中间的引导虚线，因为布局已足够紧凑。
-    - 成绩(Score)的位置被大幅左移，紧随姓名之后，不再固守右侧边缘。
-    ========================================================
-  -->
+  <!-- 数据行列表 -->
   {% for item in results %}
-  <!-- Y坐标计算: 头部 150 + 索引 * 80 (新行高) -->
-  <g transform="translate(30, {{ 150 + loop.index0 * 80 }})">
+  <!-- Y坐标计算: 头部 160 + 索引 * 96 (行高 80 + 间距 16) -->
+  <g transform="translate(40, {{ 160 + loop.index0 * 96 }})">
     
-    <!-- 卡片背景 (适应新宽度和高度) -->
-    {% set card_width = 580 %}
-    {% set card_height = 68 %}
+    <!-- 专属卡片背景与描边 -->
     {% if item.rank == 1 %}
-      <rect width="{{ card_width }}" height="{{ card_height }}" rx="12" fill="url(#rowGold)" stroke="#d4af37" stroke-width="2" />
+      <rect width="720" height="80" rx="16" fill="url(#rowGold)" stroke="#d4af37" stroke-width="2" />
     {% elif item.rank == 2 %}
-      <rect width="{{ card_width }}" height="{{ card_height }}" rx="12" fill="url(#rowSilver)" stroke="#94a3b8" stroke-width="1.5" />
+      <rect width="720" height="80" rx="16" fill="url(#rowSilver)" stroke="#94a3b8" stroke-width="1.5" />
     {% elif item.rank == 3 %}
-      <rect width="{{ card_width }}" height="{{ card_height }}" rx="12" fill="url(#rowBronze)" stroke="#b45309" stroke-width="1.5" />
+      <rect width="720" height="80" rx="16" fill="url(#rowBronze)" stroke="#b45309" stroke-width="1.5" />
     {% else %}
-      <rect width="{{ card_width }}" height="{{ card_height }}" rx="12" fill="#161b22" stroke="#30363d" stroke-width="1.5" />
+      <rect width="720" height="80" rx="16" fill="#161b22" stroke="#30363d" stroke-width="1.5" />
     {% endif %}
 
-    <!-- 排名指示器 (尺寸微调) -->
-    {% set indicator_size = 48 %}
-    {% set indicator_y_pos = (card_height - indicator_size) / 2 %}
-    {% if item.rank <= 3 %}
-      <rect x="12" y="{{ indicator_y_pos }}" width="{{ indicator_size }}" height="{{ indicator_size }}" rx="10" 
-            fill="url({% if item.rank == 1 %}gold{% elif item.rank == 2 %}silver{% else %}bronze{% endif %})" 
-            {% if item.rank == 1 %}filter="url(#glow)"{% endif %} />
-      <text x="36" y="{{ indicator_y_pos + 31 }}" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="24" font-weight="bold" 
-            fill="{% if item.rank == 1 %}#3E2723{% elif item.rank == 2 %}#0F172A{% else %}#4E342E{% endif %}" text-anchor="middle">{{ item.rank }}</text>
+    <!-- 排名指示器 -->
+    {% if item.rank == 1 %}
+      <rect x="16" y="12" width="56" height="56" rx="14" fill="url(#gold)" filter="url(#glow)" />
+      <text x="44" y="50" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="bold" fill="#3E2723" text-anchor="middle">{{ item.rank }}</text>
+    {% elif item.rank == 2 %}
+      <rect x="16" y="12" width="56" height="56" rx="14" fill="url(#silver)" />
+      <text x="44" y="50" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="bold" fill="#0F172A" text-anchor="middle">{{ item.rank }}</text>
+    {% elif item.rank == 3 %}
+      <rect x="16" y="12" width="56" height="56" rx="14" fill="url(#bronze)" />
+      <text x="44" y="50" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="bold" fill="#4E342E" text-anchor="middle">{{ item.rank }}</text>
     {% else %}
-      <rect x="12" y="{{ indicator_y_pos }}" width="{{ indicator_size }}" height="{{ indicator_size }}" rx="10" fill="#21262d" stroke="#30363d" stroke-width="1.5" />
-      <text x="36" y="{{ indicator_y_pos + 30 }}" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="22" font-weight="bold" fill="#8b949e" text-anchor="middle">{{ item.rank }}</text>
+      <rect x="16" y="12" width="56" height="56" rx="14" fill="#21262d" stroke="#30363d" stroke-width="1.5" />
+      <text x="44" y="50" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="26" font-weight="bold" fill="#8b949e" text-anchor="middle">{{ item.rank }}</text>
     {% endif %}
 
-    <!-- 玩家名字 (位置和字体大小调整) -->
-    {% set name_y_pos = card_height / 2 + 10 %}
-    <text x="76" y="{{ name_y_pos }}" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="28" font-weight="{{ '600' if item.rank == 1 else '500' }}" fill="{{ '#f0f6fc' if item.rank == 1 else '#c9d1d9' }}">{{ item.name }}</text>
+    <!-- 玩家名字 -->
+    {% if item.rank == 1 %}
+      <text x="96" y="52" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="32" font-weight="600" fill="#f0f6fc">{{ item.name }}</text>
+    {% else %}
+      <text x="96" y="52" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="32" font-weight="500" fill="#c9d1d9">{{ item.name }}</text>
+    {% endif %}
     
-    <!-- 成绩 (关键改动：大幅左移，实现紧凑布局) -->
-    <!-- 通过将 x 坐标设置为 card_width - 18 (右内边距)，并保持 text-anchor="end"，我们确保了成绩紧跟在名字区域后，并且自身右对齐，便于比较 -->
-    {% set score_x_pos = card_width - 18 %}
-    {% set score_y_pos = card_height / 2 + 10 %}
-    <text x="{{ score_x_pos }}" y="{{ score_y_pos }}" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="30" font-weight="bold" text-anchor="end"
-          fill="{% if item.rank == 1 %}#FFDF73{% elif item.rank == 2 %}#e2e8f0{% elif item.rank == 3 %}#FDBA74{% else %}#58a6ff{% endif %}">
-      {{ item.value_display }}
-    </text>
+    <!-- 空白区域视觉引导连接线 (Leader Line) -->
+    {% if item.rank == 1 %}
+      <line x1="300" y1="40" x2="600" y2="40" stroke="#d4af37" stroke-opacity="0.35" stroke-dasharray="4 6" stroke-width="2" stroke-linecap="round" />
+    {% elif item.rank == 2 %}
+      <line x1="300" y1="40" x2="600" y2="40" stroke="#94a3b8" stroke-opacity="0.35" stroke-dasharray="4 6" stroke-width="2" stroke-linecap="round" />
+    {% elif item.rank == 3 %}
+      <line x1="300" y1="40" x2="600" y2="40" stroke="#b45309" stroke-opacity="0.35" stroke-dasharray="4 6" stroke-width="2" stroke-linecap="round" />
+    {% else %}
+      <line x1="300" y1="40" x2="600" y2="40" stroke="#30363d" stroke-opacity="0.6" stroke-dasharray="4 6" stroke-width="2" stroke-linecap="round" />
+    {% endif %}
+
+    <!-- 成绩数值 -->
+    {% if item.rank == 1 %}
+      <text x="700" y="52" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="34" font-weight="bold" fill="#FFDF73" text-anchor="end">{{ item.value_display }}</text>
+    {% elif item.rank == 2 %}
+      <text x="700" y="52" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="34" font-weight="bold" fill="#e2e8f0" text-anchor="end">{{ item.value_display }}</text>
+    {% elif item.rank == 3 %}
+      <text x="700" y="52" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="34" font-weight="bold" fill="#FDBA74" text-anchor="end">{{ item.value_display }}</text>
+    {% else %}
+      <text x="700" y="52" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="34" font-weight="bold" fill="#58a6ff" text-anchor="end">{{ item.value_display }}</text>
+    {% endif %}
     
   </g>
   {% endfor %}
 
-  <!-- 底部 Footer (适应新宽度) -->
-  <text x="610" y="{{ 180 + results|length * 80 - 25 }}" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#484f58" text-anchor="end">Generated by CubeClub Plugin • {{ now }}</text>
+  <!-- 底部 Footer -->
+  <text x="40" y="{{ 200 + results|length * 96 - 30 }}" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#484f58">Generated by CubeClub Plugin • {{ now }}</text>
 </svg>
