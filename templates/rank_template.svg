@@ -1,4 +1,4 @@
-<svg width="800" height="{{ 200 + results|length * 96 }}" viewBox="0 0 800 {{ 200 + results|length * 96 }}" xmlns="http://www.w3.org/2000/svg">
+<svg width="600" height="{{ 200 + results|length * 96 }}" viewBox="0 0 600 {{ 200 + results|length * 96 }}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <!-- 全局深邃背景渐变 -->
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -44,24 +44,27 @@
   <!-- 全局背景 -->
   <rect width="100%" height="100%" fill="url(#bgGrad)" />
 
-  <!-- 头部信息 -->
-  <text x="40" y="80" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="56" font-weight="900" fill="#f0f6fc" letter-spacing="2">{{ title }}</text>
-  <text x="42" y="125" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="28" font-weight="500" fill="#8b949e">{{ subtitle }}</text>
+  <!-- 头部信息：整体向左贴紧，字号适当缩小以匹配紧凑布局 -->
+  <text x="40" y="70" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="44" font-weight="900" fill="#f0f6fc" letter-spacing="1">{{ title }}</text>
+  <text x="42" y="110" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="22" font-weight="500" fill="#8b949e">{{ subtitle }}</text>
+  
+  <!-- 分割线：宽度适配新的600画布 (40起到560) -->
+  <line x1="40" y1="140" x2="560" y2="140" stroke="#30363d" stroke-width="1.5" />
 
   <!-- 数据行列表 -->
   {% for item in results %}
-  <!-- Y坐标计算: 头部 160 + 索引 * 96 (行高 80 + 间距 16) -->
+  <!-- Y坐标计算: 头部高度缩减，起始高度改为 160 -->
   <g transform="translate(40, {{ 160 + loop.index0 * 96 }})">
     
-    <!-- 专属卡片背景与描边 -->
+    <!-- 卡片宽度缩减到 520 (左右留白各40，600-80=520) -->
     {% if item.rank == 1 %}
-      <rect width="720" height="80" rx="16" fill="url(#rowGold)" stroke="#d4af37" stroke-width="2" />
+      <rect width="520" height="80" rx="16" fill="url(#rowGold)" stroke="#d4af37" stroke-width="2" />
     {% elif item.rank == 2 %}
-      <rect width="720" height="80" rx="16" fill="url(#rowSilver)" stroke="#94a3b8" stroke-width="1.5" />
+      <rect width="520" height="80" rx="16" fill="url(#rowSilver)" stroke="#94a3b8" stroke-width="1.5" />
     {% elif item.rank == 3 %}
-      <rect width="720" height="80" rx="16" fill="url(#rowBronze)" stroke="#b45309" stroke-width="1.5" />
+      <rect width="520" height="80" rx="16" fill="url(#rowBronze)" stroke="#b45309" stroke-width="1.5" />
     {% else %}
-      <rect width="720" height="80" rx="16" fill="#161b22" stroke="#30363d" stroke-width="1.5" />
+      <rect width="520" height="80" rx="16" fill="#161b22" stroke="#30363d" stroke-width="1.5" />
     {% endif %}
 
     <!-- 排名指示器 -->
@@ -79,38 +82,38 @@
       <text x="44" y="50" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="26" font-weight="bold" fill="#8b949e" text-anchor="middle">{{ item.rank }}</text>
     {% endif %}
 
-    <!-- 玩家名字 -->
+    <!-- 玩家名字 (字号由 32 缩减为 28，更精致) -->
     {% if item.rank == 1 %}
-      <text x="96" y="52" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="32" font-weight="600" fill="#f0f6fc">{{ item.name }}</text>
+      <text x="92" y="51" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="28" font-weight="600" fill="#f0f6fc">{{ item.name }}</text>
     {% else %}
-      <text x="96" y="52" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="32" font-weight="500" fill="#c9d1d9">{{ item.name }}</text>
+      <text x="92" y="51" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="28" font-weight="500" fill="#c9d1d9">{{ item.name }}</text>
     {% endif %}
     
-    <!-- 空白区域视觉引导连接线 (Leader Line) -->
+    <!-- 引导虚线：大幅缩短长度以匹配新宽度 (起始点260, 终点380) -->
     {% if item.rank == 1 %}
-      <line x1="300" y1="40" x2="600" y2="40" stroke="#d4af37" stroke-opacity="0.35" stroke-dasharray="4 6" stroke-width="2" stroke-linecap="round" />
+      <line x1="260" y1="40" x2="380" y2="40" stroke="#d4af37" stroke-opacity="0.35" stroke-dasharray="4 6" stroke-width="2" stroke-linecap="round" />
     {% elif item.rank == 2 %}
-      <line x1="300" y1="40" x2="600" y2="40" stroke="#94a3b8" stroke-opacity="0.35" stroke-dasharray="4 6" stroke-width="2" stroke-linecap="round" />
+      <line x1="260" y1="40" x2="380" y2="40" stroke="#94a3b8" stroke-opacity="0.35" stroke-dasharray="4 6" stroke-width="2" stroke-linecap="round" />
     {% elif item.rank == 3 %}
-      <line x1="300" y1="40" x2="600" y2="40" stroke="#b45309" stroke-opacity="0.35" stroke-dasharray="4 6" stroke-width="2" stroke-linecap="round" />
+      <line x1="260" y1="40" x2="380" y2="40" stroke="#b45309" stroke-opacity="0.35" stroke-dasharray="4 6" stroke-width="2" stroke-linecap="round" />
     {% else %}
-      <line x1="300" y1="40" x2="600" y2="40" stroke="#30363d" stroke-opacity="0.6" stroke-dasharray="4 6" stroke-width="2" stroke-linecap="round" />
+      <line x1="260" y1="40" x2="380" y2="40" stroke="#30363d" stroke-opacity="0.6" stroke-dasharray="4 6" stroke-width="2" stroke-linecap="round" />
     {% endif %}
 
-    <!-- 成绩数值 -->
+    <!-- 成绩位置：严格右对齐到 x=500 (卡片宽520，留出20px右边距)，字号微调至30 -->
     {% if item.rank == 1 %}
-      <text x="700" y="52" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="34" font-weight="bold" fill="#FFDF73" text-anchor="end">{{ item.value_display }}</text>
+      <text x="500" y="51" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="30" font-weight="bold" fill="#FFDF73" text-anchor="end">{{ item.value_display }}</text>
     {% elif item.rank == 2 %}
-      <text x="700" y="52" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="34" font-weight="bold" fill="#e2e8f0" text-anchor="end">{{ item.value_display }}</text>
+      <text x="500" y="51" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="30" font-weight="bold" fill="#e2e8f0" text-anchor="end">{{ item.value_display }}</text>
     {% elif item.rank == 3 %}
-      <text x="700" y="52" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="34" font-weight="bold" fill="#FDBA74" text-anchor="end">{{ item.value_display }}</text>
+      <text x="500" y="51" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="30" font-weight="bold" fill="#FDBA74" text-anchor="end">{{ item.value_display }}</text>
     {% else %}
-      <text x="700" y="52" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="34" font-weight="bold" fill="#58a6ff" text-anchor="end">{{ item.value_display }}</text>
+      <text x="500" y="51" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="30" font-weight="bold" fill="#58a6ff" text-anchor="end">{{ item.value_display }}</text>
     {% endif %}
     
   </g>
   {% endfor %}
 
-  <!-- 底部 Footer -->
-  <text x="40" y="{{ 200 + results|length * 96 - 30 }}" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#484f58">Generated by CubeClub Plugin • {{ now }}</text>
+  <!-- 底部 Footer：重新对齐到新的画布右侧(x=560) -->
+  <text x="560" y="{{ 200 + results|length * 96 - 30 }}" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#484f58" text-anchor="end">Generated by CubeClub Plugin • {{ now }}</text>
 </svg>
