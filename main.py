@@ -349,7 +349,7 @@ class CubeClubPlugin(Star):
                 "rkm": ("daily", "month"), "月榜": ("daily", "month"),
                 "rky": ("daily", "year"), "年榜": ("daily", "year"),
                 "rka": ("daily", "alltime"), "总榜": ("daily", "alltime"),
-                "rkc": ("comp24", "count"), "勤奋榜": ("daily", "count"),
+                "rkc": ("comp24", "count"), "全能榜": ("daily", "count"),
             }
             
             scope, rk_type = "daily", "alltime"
