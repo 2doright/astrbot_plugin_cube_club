@@ -1,0 +1,2 @@
+# 此插件仅使用 Python 内置库（sqlite3, datetime等）和 AstrBot 提供的 API
+# 未使用任何额外第三方依赖，因此此文件为空。
