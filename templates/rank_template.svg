@@ -1,68 +1,84 @@
-<svg width="480" height="{{ 130 + results|length * 46 }}" viewBox="0 0 480 {{ 130 + results|length * 46 }}" xmlns="http://www.w3.org/2000/svg">
+<svg width="800" height="{{ 200 + results|length * 96 }}" viewBox="0 0 800 {{ 200 + results|length * 96 }}" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- 顶部高光渐变条 -->
-    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#38bdf8" />
-      <stop offset="50%" stop-color="#818cf8" />
-      <stop offset="100%" stop-color="#c084fc" />
+    <!-- 全局深邃背景渐变 -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d1117" />
+      <stop offset="100%" stop-color="#010409" />
     </linearGradient>
 
-    <!-- 前三名渐变徽章 -->
+    <!-- 第一名专属卡片渐变背景 -->
+    <linearGradient id="rowGold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2a2211" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#161b22" stop-opacity="0.8" />
+    </linearGradient>
+
+    <!-- 奖牌徽章渐变 -->
     <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fef08a" />
-      <stop offset="100%" stop-color="#eab308" />
+      <stop offset="0%" stop-color="#FFDF73" />
+      <stop offset="100%" stop-color="#D4AF37" />
     </linearGradient>
     <linearGradient id="silver" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f1f5f9" />
-      <stop offset="100%" stop-color="#94a3b8" />
+      <stop offset="0%" stop-color="#F8FAFC" />
+      <stop offset="100%" stop-color="#94A3B8" />
     </linearGradient>
     <linearGradient id="bronze" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fdba74" />
-      <stop offset="100%" stop-color="#d97706" />
+      <stop offset="0%" stop-color="#FDBA74" />
+      <stop offset="100%" stop-color="#B45309" />
     </linearGradient>
+    
+    <!-- 卡片泛光滤镜 (用于第一名奖牌) -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
   </defs>
 
   <!-- 全局背景 -->
-  <rect width="100%" height="100%" fill="#09090b" rx="12" />
-  
-  <!-- 顶部渐变装饰线 -->
-  <rect width="100%" height="4" fill="url(#accentGrad)" rx="2" />
+  <rect width="100%" height="100%" fill="url(#bgGrad)" />
 
   <!-- 头部信息 -->
-  <text x="24" y="45" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="800" fill="#fafafa">{{ title }}</text>
-  <text x="24" y="68" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="500" fill="#a1a1aa">{{ subtitle }}</text>
+  <text x="40" y="80" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="56" font-weight="900" fill="#f0f6fc" letter-spacing="2">{{ title }}</text>
+  <text x="42" y="125" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="28" font-weight="500" fill="#8b949e">{{ subtitle }}</text>
 
   <!-- 数据行列表 -->
   {% for item in results %}
-  <!-- 计算每行的 Y 轴偏移: 85 (Header高度) + 索引 * 46 (行高+间距) -->
-  <g transform="translate(24, {{ 85 + loop.index0 * 46 }})">
-    <!-- 行卡片背景 -->
-    <rect width="432" height="38" rx="8" fill="#18181b" stroke="#27272a" stroke-width="1" />
+  <!-- Y坐标计算: 头部 160 + 索引 * 96 (行高 80 + 间距 16) -->
+  <g transform="translate(40, {{ 160 + loop.index0 * 96 }})">
     
+    <!-- 专属卡片背景与描边 -->
+    {% if item.rank == 1 %}
+      <rect width="720" height="80" rx="16" fill="url(#rowGold)" stroke="#d4af37" stroke-width="2" />
+    {% else %}
+      <rect width="720" height="80" rx="16" fill="#161b22" stroke="#30363d" stroke-width="1.5" />
+    {% endif %}
+
     <!-- 排名指示器 -->
     {% if item.rank == 1 %}
-      <rect x="6" y="6" width="26" height="26" rx="6" fill="url(#gold)" />
-      <text x="19" y="24" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="bold" fill="#422006" text-anchor="middle">{{ item.rank }}</text>
+      <rect x="16" y="12" width="56" height="56" rx="14" fill="url(#gold)" filter="url(#glow)" />
+      <text x="44" y="50" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="bold" fill="#3E2723" text-anchor="middle">{{ item.rank }}</text>
     {% elif item.rank == 2 %}
-      <rect x="6" y="6" width="26" height="26" rx="6" fill="url(#silver)" />
-      <text x="19" y="24" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">{{ item.rank }}</text>
+      <rect x="16" y="12" width="56" height="56" rx="14" fill="url(#silver)" />
+      <text x="44" y="50" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="bold" fill="#0F172A" text-anchor="middle">{{ item.rank }}</text>
     {% elif item.rank == 3 %}
-      <rect x="6" y="6" width="26" height="26" rx="6" fill="url(#bronze)" />
-      <text x="19" y="24" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="bold" fill="#431407" text-anchor="middle">{{ item.rank }}</text>
+      <rect x="16" y="12" width="56" height="56" rx="14" fill="url(#bronze)" />
+      <text x="44" y="50" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="bold" fill="#4E342E" text-anchor="middle">{{ item.rank }}</text>
     {% else %}
-      <!-- 4名及以后 -->
-      <rect x="6" y="6" width="26" height="26" rx="6" fill="#27272a" />
-      <text x="19" y="24" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="13" font-weight="bold" fill="#71717a" text-anchor="middle">{{ item.rank }}</text>
+      <rect x="16" y="12" width="56" height="56" rx="14" fill="#21262d" stroke="#30363d" stroke-width="1.5" />
+      <text x="44" y="49" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="26" font-weight="bold" fill="#8b949e" text-anchor="middle">{{ item.rank }}</text>
     {% endif %}
 
     <!-- 玩家名字 -->
-    <text x="44" y="24" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#e4e4e7">{{ item.name }}</text>
+    {% if item.rank == 1 %}
+      <text x="96" y="52" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="32" font-weight="600" fill="#f0f6fc">{{ item.name }}</text>
+    {% else %}
+      <text x="96" y="52" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="32" font-weight="500" fill="#c9d1d9">{{ item.name }}</text>
+    {% endif %}
     
-    <!-- 成绩数据 -->
-    <text x="420" y="25" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="15" font-weight="bold" fill="#38bdf8" text-anchor="end">{{ item.value_display }}</text>
+    <!-- 成绩数值 -->
+    <text x="700" y="54" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="34" font-weight="bold" fill="#58a6ff" text-anchor="end">{{ item.value_display }}</text>
   </g>
   {% endfor %}
 
   <!-- 底部 Footer -->
-  <text x="24" y="{{ 130 + results|length * 46 - 16 }}" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="11" fill="#52525b">Generated by CubeClub Plugin • {{ now }}</text>
+  <text x="40" y="{{ 200 + results|length * 96 - 30 }}" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#484f58">Generated by CubeClub Plugin • {{ now }}</text>
 </svg>
