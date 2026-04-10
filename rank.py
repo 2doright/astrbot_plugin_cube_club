@@ -57,7 +57,16 @@ class RankQuery:
     def _time_rank_data(
         scope: str, rank_type: str, project: str, statistic: str
     ) -> dict:
-        header = f"{rank_type}-Rank\n{project} {statistic}\n"
+        # 1. 根据 scope 动态生成更合适的标题
+        if scope.startswith("comp"):
+            year = scope.replace("comp", "")
+            # 如果是两位数年份（如24），可以格式化为 2024
+            display_title = f"COMP 20{year} RANK" if len(year) == 2 else f"COMP {year} RANK"
+        else:
+            display_title = f"{rank_type.upper()} RANK"
+
+        # 文本 fallback 用的 header
+        header = f"{display_title}\n{project.upper()} {statistic.upper()}\n"
         results: list[dict] = []
 
         all_sids = db.get_all_sids_for_scope(scope)
@@ -100,13 +109,13 @@ class RankQuery:
         for i, r in enumerate(ranked):
             r["rank"] = i + 1
 
+        # 2. 将动态生成的标题传给 SVG 模板
         return {
-            "title": f"{rank_type.upper()} RANK",
-            "subtitle": f"{project} {statistic}",
+            "title": display_title,
+            "subtitle": f"{project.upper()} {statistic.upper()}", # 顺便将子标题大写，视觉更统一
             "header": header,
             "results": ranked
         }
-
     @staticmethod
     def _count_rank_data(scope: str) -> dict:
         header = "count-Rank\n"
