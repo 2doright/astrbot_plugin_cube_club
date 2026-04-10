@@ -1,14 +1,54 @@
-# astrbot-plugin-helloworld
+# AstrBot CubeClub Plugin
 
-AstrBot 插件模板 / A template plugin for AstrBot plugin feature
+[![AstrBot](https://img.shields.io/badge/AstrBot-v3.0.0+-blue.svg)](https://github.com/AstrBotDevs/AstrBot)
+[![License](https://img.shields.io/github/license/2doright/astrbot_plugin_cube_club)](LICENSE)
 
-> [!NOTE]
-> This repo is just a template of [AstrBot](https://github.com/AstrBotDevs/AstrBot) Plugin.
-> 
-> [AstrBot](https://github.com/AstrBotDevs/AstrBot) is an agentic assistant for both personal and group conversations. It can be deployed across dozens of mainstream instant messaging platforms, including QQ, Telegram, Feishu, DingTalk, Slack, LINE, Discord, Matrix, etc. In addition, it provides a reliable and extensible conversational AI infrastructure for individuals, developers, and teams. Whether you need a personal AI companion, an intelligent customer support agent, an automation assistant, or an enterprise knowledge base, AstrBot enables you to quickly build AI applications directly within your existing messaging workflows.
+一个专门为 AstrBot 设计的魔方成绩记录与排行插件，支持日常练习、赛事记录以及多维度的排行榜展示。
 
-# Supports
+## 🌟 主要特性
 
-- [AstrBot Repo](https://github.com/AstrBotDevs/AstrBot)
-- [AstrBot Plugin Development Docs (Chinese)](https://docs.astrbot.app/dev/star/plugin-new.html)
-- [AstrBot Plugin Development Docs (English)](https://docs.astrbot.app/en/dev/star/plugin-new.html)
+- **多模式记录**：支持日常练习成绩记录和赛事成绩记录。
+- **丰富的项目池**：覆盖 WCA 官方项目及多种非官方/趣味项目。
+- **多维度排行**：支持日榜、月榜、年榜、总榜以及勤奋榜。
+- **智能统计**：自动计算 PB (个人最好成绩)、Ao5 (平均 5 次)、Mo3 (平均 3 次) 等统计指标。
+- **管理功能**：完备的管理员录入与用户管理机制。
+- **双语支持**：所有核心指令均支持中英文别名。
+
+## 🎮 指令指南
+
+### 1. 基础配置
+- `/reg <Name> [ID]` (别名: `注册`)：注册新用户。ID 为可选的额外标识。
+- `/me` (别名: `我`)：查看当前绑定的用户信息。
+- `/who <name/qid>` (别名: `查人`)：根据姓名或 QQ 号查询用户信息。
+- `/help` (别名: `帮助`)：获取指令帮助。
+
+### 2. 成绩记录
+- **日常记录**: `/<项目> <成绩>`（例如：`/333 10.5`）。支持项目可通过 `/help type` 查看。
+- **比赛录入** (管理员限定): `/comp[年份] <项目> <姓名> <成绩>`。
+    - 示例: `/比赛 333 张三 9.8` (默认今年)
+    - 示例: `/comp24 333 李四 11.2` (指定 2024 年)
+
+### 3. 数据查询
+- `/ask <项目>` (别名: `查`)：查看自己的成绩。支持 `333`、`all` (全部项目)、`num` (项目计数)。
+- `/askwho <名字> <项目>` (别名: `查他`)：查询他人的成绩信息。
+
+### 4. 排行榜
+指令格式: `/rkXXX <项目> <统计类型>`
+- **榜单分类**：
+    - `/rkd` (日榜) / `/rkm` (月榜) / `/rky` (年榜) / `/rka` (总榜)
+    - `/rkc` (勤奋榜): 按练习记录条数排序。
+    - `/rk[年份]` (如 `/rk24`): 指定年份的赛事排行榜。
+- **统计参数**：`pb` (最高单次), `ao5` (平均 5 次), `mo3` (平均 3 次), `aoAll` (全量平均)。
+
+## 🧩 支持项目
+
+目前支持的项目包括：
+`222`, `333`, `444`, `555`, `666`, `777`, `222oh`, `222bf`, `333oh`, `333bf`, `pyram3`, `pyram4`, `sq1`, `clock`, `skewb`, `minx`, `hrd`, `nhrd` 等。
+
+## 🛠️ 安装
+
+在 AstrBot 的插件商店搜索 `cube_club` 即可安装，或手动克隆至插件目录。
+
+## 📄 开源协议
+
+本项目采用 [Apache-2.0](LICENSE) 协议。
