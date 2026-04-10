@@ -336,10 +336,10 @@ class CubeClubPlugin(Star):
             logger.error(f"del_member error: {e}")
             yield event.plain_result("删除失败。")
 
-    @filter.regex(r"^(rk|榜|rkd|rkm|rky|rka|rkc|日榜|月榜|年榜|总榜|勤奋榜)(\d{2})?(?!\d)(?:\s|$)")
+    @filter.regex(r"^(rk|榜|rkd|rkm|rky|rka|rkc|日榜|月榜|年榜|总榜|全能榜)(\d{2})?(?!\d)(?:\s|$)")
     async def rk(self, event: AstrMessageEvent):
         try:
-            match = re.match(r"^(rk|榜|rkd|rkm|rky|rka|rkc|日榜|月榜|年榜|总榜|勤奋榜)(\d{2})?(?!\d)", event.message_str)
+            match = re.match(r"^(rk|榜|rkd|rkm|rky|rka|rkc|日榜|月榜|年榜|总榜|全能榜)(\d{2})?(?!\d)", event.message_str)
             cmd = match.group(1)
             year = match.group(2)
             args = event.message_str.split()[1:]
@@ -349,7 +349,7 @@ class CubeClubPlugin(Star):
                 "rkm": ("daily", "month"), "月榜": ("daily", "month"),
                 "rky": ("daily", "year"), "年榜": ("daily", "year"),
                 "rka": ("daily", "alltime"), "总榜": ("daily", "alltime"),
-                "rkc": ("comp24", "count"), "勤奋榜": ("daily", "count"),
+                "rkc": ("comp24", "count"), "全能榜": ("daily", "count"),
             }
             
             scope, rk_type = "daily", "alltime"
@@ -451,7 +451,7 @@ class CubeClubPlugin(Star):
                     "  - **rkd (Day)**: 今日产生的最新记录排行。\n"
                     "  - **rka (All)**: 历史全时期最佳战绩大榜。\n\n"
                     "- `/rkc`\n"
-                    "  别名: `/勤奋榜`。按用户涉及的项目广度进行排名。\n\n"
+                    "  别名: `/全能榜`。按用户涉及的项目广度进行排名。\n\n"
                     "- **统计类型关键词**:\n"
                     "  - `pb` (单次最高纪录)\n"
                     "  - `ao5` (传统五次平均, 剔除极值)\n"
@@ -486,7 +486,7 @@ class CubeClubPlugin(Star):
                 "1. **👤 账号管理** (注册、绑定、资料)\n"
                 "2. **⏱️ 成绩记录** (录入、项目、撤销)\n"
                 "3. **🔍 成绩查询** (查记录、查他人)\n"
-                "4. **🏆 排行榜** (日/月/年/总/勤奋)\n"
+                "4. **🏆 排行榜** (日/月/年/总/全能)\n"
                 "5. **🛠️ 管理员指令** (解绑、线下赛录入)\n"
                 "---\n"
                 "输入 `/help <序号>` 查看详情 (示例: `/help 1`)\n"
