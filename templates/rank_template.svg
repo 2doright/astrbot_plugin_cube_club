@@ -6,9 +6,17 @@
       <stop offset="100%" stop-color="#010409" />
     </linearGradient>
 
-    <!-- 第一名专属卡片渐变背景 -->
+    <!-- 排名专属卡片渐变背景 (金银铜) -->
     <linearGradient id="rowGold" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#2a2211" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#161b22" stop-opacity="0.8" />
+    </linearGradient>
+    <linearGradient id="rowSilver" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1e293b" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#161b22" stop-opacity="0.8" />
+    </linearGradient>
+    <linearGradient id="rowBronze" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3b2010" stop-opacity="0.8" />
       <stop offset="100%" stop-color="#161b22" stop-opacity="0.8" />
     </linearGradient>
 
@@ -48,6 +56,10 @@
     <!-- 专属卡片背景与描边 -->
     {% if item.rank == 1 %}
       <rect width="720" height="80" rx="16" fill="url(#rowGold)" stroke="#d4af37" stroke-width="2" />
+    {% elif item.rank == 2 %}
+      <rect width="720" height="80" rx="16" fill="url(#rowSilver)" stroke="#94a3b8" stroke-width="1.5" />
+    {% elif item.rank == 3 %}
+      <rect width="720" height="80" rx="16" fill="url(#rowBronze)" stroke="#b45309" stroke-width="1.5" />
     {% else %}
       <rect width="720" height="80" rx="16" fill="#161b22" stroke="#30363d" stroke-width="1.5" />
     {% endif %}
@@ -64,7 +76,7 @@
       <text x="44" y="50" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="bold" fill="#4E342E" text-anchor="middle">{{ item.rank }}</text>
     {% else %}
       <rect x="16" y="12" width="56" height="56" rx="14" fill="#21262d" stroke="#30363d" stroke-width="1.5" />
-      <text x="44" y="49" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="26" font-weight="bold" fill="#8b949e" text-anchor="middle">{{ item.rank }}</text>
+      <text x="44" y="50" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="26" font-weight="bold" fill="#8b949e" text-anchor="middle">{{ item.rank }}</text>
     {% endif %}
 
     <!-- 玩家名字 -->
@@ -74,8 +86,28 @@
       <text x="96" y="52" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="32" font-weight="500" fill="#c9d1d9">{{ item.name }}</text>
     {% endif %}
     
+    <!-- 空白区域视觉引导连接线 (Leader Line) -->
+    {% if item.rank == 1 %}
+      <line x1="300" y1="40" x2="600" y2="40" stroke="#d4af37" stroke-opacity="0.35" stroke-dasharray="4 6" stroke-width="2" stroke-linecap="round" />
+    {% elif item.rank == 2 %}
+      <line x1="300" y1="40" x2="600" y2="40" stroke="#94a3b8" stroke-opacity="0.35" stroke-dasharray="4 6" stroke-width="2" stroke-linecap="round" />
+    {% elif item.rank == 3 %}
+      <line x1="300" y1="40" x2="600" y2="40" stroke="#b45309" stroke-opacity="0.35" stroke-dasharray="4 6" stroke-width="2" stroke-linecap="round" />
+    {% else %}
+      <line x1="300" y1="40" x2="600" y2="40" stroke="#30363d" stroke-opacity="0.6" stroke-dasharray="4 6" stroke-width="2" stroke-linecap="round" />
+    {% endif %}
+
     <!-- 成绩数值 -->
-    <text x="700" y="54" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="34" font-weight="bold" fill="#58a6ff" text-anchor="end">{{ item.value_display }}</text>
+    {% if item.rank == 1 %}
+      <text x="700" y="52" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="34" font-weight="bold" fill="#FFDF73" text-anchor="end">{{ item.value_display }}</text>
+    {% elif item.rank == 2 %}
+      <text x="700" y="52" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="34" font-weight="bold" fill="#e2e8f0" text-anchor="end">{{ item.value_display }}</text>
+    {% elif item.rank == 3 %}
+      <text x="700" y="52" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="34" font-weight="bold" fill="#FDBA74" text-anchor="end">{{ item.value_display }}</text>
+    {% else %}
+      <text x="700" y="52" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="34" font-weight="bold" fill="#58a6ff" text-anchor="end">{{ item.value_display }}</text>
+    {% endif %}
+    
   </g>
   {% endfor %}
 
