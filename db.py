@@ -260,6 +260,44 @@ def get_attempts_in_period(
     return [r["seconds"] for r in rows]
 
 
+def get_daily_attempt_counts(
+    student_id: str | None = None,
+    year: int | None = None,
+    month: int | None = None,
+) -> dict[str, int]:
+    """Return daily attempt counts aggregated by day for the given period."""
+    now = datetime.now()
+    if year is None and month is None:
+        year = now.year
+        month = now.month
+
+    if month is not None:
+        date_filter = f"{year:04d}-{month:02d}"
+        fmt = "%Y-%m"
+    else:
+        date_filter = f"{year:04d}"
+        fmt = "%Y"
+
+    sql = (
+        "SELECT strftime('%Y-%m-%d', recorded_at) AS day, COUNT(*) AS cnt "
+        "FROM attempts "
+    )
+    params: list[object] = []
+    if student_id is not None:
+        sql += f"WHERE student_id = ? AND strftime('{fmt}', recorded_at)=? "
+        params = [student_id, date_filter]
+    else:
+        sql += f"WHERE strftime('{fmt}', recorded_at)=? "
+        params = [date_filter]
+
+    sql += "GROUP BY day ORDER BY day"
+
+    conn = _connect()
+    rows = conn.execute(sql, params).fetchall()
+    conn.close()
+    return {r["day"]: r["cnt"] for r in rows}
+
+
 def get_all_sids_for_scope(scope: str) -> list[str]:
     """Return every student_id that has at least one attempt in the given scope."""
     conn = _connect()

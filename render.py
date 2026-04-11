@@ -12,13 +12,14 @@ except ImportError:
 class SVGRenderer:
     def __init__(self, template_dir: str):
         self.env = Environment(loader=FileSystemLoader(template_dir))
-        self.template_name = "rank_template.svg"
+        self.rank_template_name = "rank_template.svg"
+        self.heatmap_template_name = "heatmap_template.svg"
 
     def render_rank(self, data: dict) -> bytes:
         """
         Render rank data to SVG and then convert to PNG bytes.
         """
-        template = self.env.get_template(self.template_name)
+        template = self.env.get_template(self.rank_template_name)
         
         # Add timestamp
         render_data = {
@@ -32,6 +33,25 @@ class SVGRenderer:
             raise ImportError("resvg-py is not installed. Please run 'pip install resvg-py'.")
         
         # Convert SVG string to PNG bytes
+        png_bytes = resvg_py.svg_to_bytes(svg_string=svg_content)
+        return png_bytes
+
+    def render_heatmap(self, data: dict) -> bytes:
+        """
+        Render heatmap data to SVG and then convert to PNG bytes.
+        """
+        template = self.env.get_template(self.heatmap_template_name)
+        
+        render_data = {
+            **data,
+            "now": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        
+        svg_content = template.render(**render_data)
+        
+        if not HAS_RESVG:
+            raise ImportError("resvg-py is not installed. Please run 'pip install resvg-py'.")
+        
         png_bytes = resvg_py.svg_to_bytes(svg_string=svg_content)
         return png_bytes
 

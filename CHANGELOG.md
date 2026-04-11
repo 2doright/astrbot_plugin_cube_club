@@ -2,7 +2,7 @@
 
 All notable changes to this project should be documented in this file.
 
-## [Unreleased]
-- 支持 `/rkc` 全能榜结果发送图片形式。
-- 完善 `metadata.yaml` 插件元数据，补充主页、文档链接、许可证和标签信息。
-- Initial changelog created.
+## [v1.1.1] - 2026-04-11
+- 记录插件版本变更，保持 `metadata.yaml` 与 `CHANGELOG.md` 同步。
+- 更新插件元数据，补充主页、文档链接、许可证和标签信息。
+- 支持 `/rkc` 全能榜结果以图片形式发送。
