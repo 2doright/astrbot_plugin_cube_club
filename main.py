@@ -336,12 +336,12 @@ class CubeClubPlugin(Star):
             logger.error(f"del_member error: {e}")
             yield event.plain_result("删除失败。")
 
-    @filter.regex(r"^(rk|榜|rkd|rkm|rky|rka|rkc|日榜|月榜|年榜|总榜|全能榜)(\d{2})?(?!\d)(?:\s|$)")
+    @filter.regex(r"^(?:(rk)(\d{2})|(rkd|rkm|rky|rka|rkc|日榜|月榜|年榜|总榜|全能榜))(?:\s|$)")
     async def rk(self, event: AstrMessageEvent):
         try:
-            match = re.match(r"^(rk|榜|rkd|rkm|rky|rka|rkc|日榜|月榜|年榜|总榜|全能榜)(\d{2})?(?!\d)", event.message_str)
-            cmd = match.group(1)
-            year = match.group(2)
+            match = re.match(r"^(?:(rk)(\d{2})|(rkd|rkm|rky|rka|rkc|日榜|月榜|年榜|总榜|全能榜))(?:\s|$)", event.message_str)
+            cmd = match.group(3) if match.group(3) else match.group(1)
+            year = match.group(2) if match.group(3) is None else None
             args = event.message_str.split()[1:]
 
             _cmd_map = {
