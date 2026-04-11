@@ -1,7 +1,7 @@
 name: astrbot_plugin_cube_club
 display_name: Cube Club
 desc: 轻量化魔方社团成绩管理与排行榜插件，支持日常/赛事记录、PB统计与图表排行。
-version: v1.1.2
+version: v1.1.3
 author: 2doright
 repo: https://github.com/2doright/astrbot_plugin_cube_club
 homepage: https://github.com/2doright/astrbot_plugin_cube_club

@@ -157,6 +157,14 @@ class CubeClubPlugin(Star):
             else:
                 month = None
 
+            subject_label = None
+            if not group:
+                member = db.get_member_by_sid(sid)
+                if member:
+                    subject_label = member.get("name") or sid
+                else:
+                    subject_label = sid
+
             counts = db.get_daily_attempt_counts(sid, year, month)
             if not counts:
                 period_text = f"{year}年" if month is None else f"{year}年{month}月"
@@ -166,7 +174,7 @@ class CubeClubPlugin(Star):
                     yield event.plain_result(f"{period_text}暂无个人成绩记录。")
                 return
 
-            data = build_heatmap_data(counts, year, month, group)
+            data = build_heatmap_data(counts, year, month, group, subject_label=subject_label)
             renderer = get_renderer()
             png_bytes = renderer.render_heatmap(data)
 

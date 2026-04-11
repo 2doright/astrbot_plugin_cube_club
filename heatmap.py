@@ -20,13 +20,21 @@ def parse_map_parameters(message: str) -> tuple[int | None, bool]:
     return year, group
 
 
-def build_heatmap_data(counts: dict[str, int], year: int, month: int | None, group: bool) -> dict:
+def build_heatmap_data(
+    counts: dict[str, int],
+    year: int,
+    month: int | None,
+    group: bool,
+    subject_label: str | None = None,
+) -> dict:
     """Prepare heatmap rendering data for monthly or yearly view."""
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     chart_type = "year" if month is None else "month"
-    label = "社团活跃度" if group else "个人活跃度"
     period_label = f"{year}年" if month is None else f"{year}年{month}月"
-    title = f"{label} 热力图"
+    if group:
+        title = "社团活跃度"
+    else:
+        title = f"{subject_label or '个人'} 活跃度"
     subtitle = period_label
 
     if chart_type == "month":
@@ -42,14 +50,14 @@ def build_heatmap_data(counts: dict[str, int], year: int, month: int | None, gro
         end_day = end_day + timedelta(days=(6 - ((end_day.weekday() + 1) % 7)))
 
     total_weeks = ((end_day - week_start).days // 7) + 1
-    cell_size = 12
+    cell_size = 18
     gap = 4
     x_spacing = cell_size + gap
     y_spacing = cell_size + gap
     max_count = max(counts.values()) if counts else 0
-    grid_left = 40
-    grid_top = 132
-    min_width = 340
+    grid_left = 48
+    grid_top = 150
+    min_width = 520
 
     def bucket_level(value: int) -> int:
         if value <= 0:
@@ -104,8 +112,8 @@ def build_heatmap_data(counts: dict[str, int], year: int, month: int | None, gro
         {"color": "#216e39", "text": "4+"},
     ]
 
-    width = max(40 + total_weeks * x_spacing + 40, min_width)
-    height = 140 + 7 * y_spacing + 90
+    width = max(grid_left + total_weeks * x_spacing + 48, min_width)
+    height = grid_top + 7 * y_spacing + 108
 
     return {
         "title": title,
