@@ -55,9 +55,15 @@ def build_heatmap_data(
     x_spacing = cell_size + gap
     y_spacing = cell_size + gap
     max_count = max(counts.values()) if counts else 0
-    grid_left = 48
-    grid_top = 150
-    min_width = 520
+
+    if chart_type == "month":
+        grid_left = 90
+        grid_top = 150
+        min_width = 580
+    else:
+        grid_left = 60
+        grid_top = 190
+        min_width = 980
 
     def bucket_level(value: int) -> int:
         if value <= 0:
@@ -94,7 +100,7 @@ def build_heatmap_data(
         day += timedelta(days=1)
 
     month_labels = []
-    month_label_y = grid_top - 18
+    month_label_y = grid_top - 24
     if chart_type == "year":
         for month_index in range(1, 13):
             month_first = date(year, month_index, 1)
@@ -102,6 +108,14 @@ def build_heatmap_data(
             month_labels.append({
                 "x": grid_left + week_index * x_spacing,
                 "label": month_first.strftime("%b")
+            })
+
+    weekday_labels = []
+    if chart_type == "month":
+        for index, label in enumerate(["日", "一", "二", "三", "四", "五", "六"]):
+            weekday_labels.append({
+                "y": grid_top + index * y_spacing + (cell_size / 2) + 4,
+                "label": label,
             })
 
     legend = [
@@ -116,12 +130,14 @@ def build_heatmap_data(
     height = grid_top + 7 * y_spacing + 108
 
     return {
+        "chart_type": chart_type,
         "title": title,
         "subtitle": subtitle,
         "now": now,
         "cells": cells,
         "month_labels": month_labels,
         "month_label_y": month_label_y,
+        "weekday_labels": weekday_labels,
         "legend": legend,
         "width": width,
         "height": height,

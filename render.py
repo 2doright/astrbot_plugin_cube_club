@@ -13,7 +13,8 @@ class SVGRenderer:
     def __init__(self, template_dir: str):
         self.env = Environment(loader=FileSystemLoader(template_dir))
         self.rank_template_name = "rank_template.svg"
-        self.heatmap_template_name = "heatmap_template.svg"
+        self.year_heatmap_template_name = "heatmap_year_template.svg"
+        self.month_heatmap_template_name = "heatmap_month_template.svg"
 
     def render_rank(self, data: dict) -> bytes:
         """
@@ -40,7 +41,12 @@ class SVGRenderer:
         """
         Render heatmap data to SVG and then convert to PNG bytes.
         """
-        template = self.env.get_template(self.heatmap_template_name)
+        template_name = (
+            self.year_heatmap_template_name
+            if data.get("chart_type") == "year"
+            else self.month_heatmap_template_name
+        )
+        template = self.env.get_template(template_name)
         
         render_data = {
             **data,

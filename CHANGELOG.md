@@ -2,6 +2,12 @@
 
 All notable changes to this project should be documented in this file.
 
+## [v1.1.4] - 2026-04-11
+
+- 拆分热力图 SVG 模板为 `heatmap_year_template.svg` 与 `heatmap_month_template.svg`，分别优化年视图与月视图布局。
+- 个人热力图标题现在优先显示注册时填写的 `extra_id`，否则回退到姓名或学号。
+- 更新渲染层逻辑，按 `chart_type` 自动选择对应热力图模板。
+
 ## [v1.1.3] - 2026-04-11
 
 - 调整热力图 SVG 输出：默认使用更大画布，宽度随年/月视图自动适配，避免模糊。

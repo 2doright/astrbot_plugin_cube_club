@@ -161,7 +161,7 @@ class CubeClubPlugin(Star):
             if not group:
                 member = db.get_member_by_sid(sid)
                 if member:
-                    subject_label = member.get("name") or sid
+                    subject_label = member.get("extra_id") or member.get("name") or sid
                 else:
                     subject_label = sid
 
