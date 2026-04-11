@@ -57,9 +57,9 @@ def build_heatmap_data(
     max_count = max(counts.values()) if counts else 0
 
     if chart_type == "month":
-        grid_left = 90
-        grid_top = 150
-        min_width = 580
+        grid_left = 64
+        grid_top = 130
+        min_width = 380
     else:
         grid_left = 60
         grid_top = 190
@@ -118,16 +118,10 @@ def build_heatmap_data(
                 "label": label,
             })
 
-    legend = [
-        {"color": "#ebedf0", "text": "0"},
-        {"color": "#9be9a8", "text": "1+"},
-        {"color": "#40c463", "text": "2+"},
-        {"color": "#30a14e", "text": "3+"},
-        {"color": "#216e39", "text": "4+"},
-    ]
+    legend = [{"color": color} for color in color_map]
 
-    width = max(grid_left + total_weeks * x_spacing + 48, min_width)
-    height = grid_top + 7 * y_spacing + 108
+    width = max(grid_left + total_weeks * x_spacing + 56, min_width)
+    height = grid_top + 7 * y_spacing + (100 if chart_type == "month" else 108)
 
     return {
         "chart_type": chart_type,
