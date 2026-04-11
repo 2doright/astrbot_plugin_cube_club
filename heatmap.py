@@ -52,14 +52,14 @@ def build_heatmap_data(
 
     total_weeks = ((end_day - week_start).days // 7) + 1
     cell_size = 18
-    gap = 4
+    gap = 2 if chart_type == "month" else 4
     x_spacing = cell_size + gap
     y_spacing = cell_size + gap
     max_count = max(counts.values()) if counts else 0
 
     if chart_type == "month":
         grid_left = 80
-        grid_top = 140
+        grid_top = 132
         min_width = 260
     else:
         grid_left = 60
