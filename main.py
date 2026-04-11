@@ -15,7 +15,7 @@ import re
 import os
 from .render import get_renderer
 
-@register("cube_club", "CubeClub", "打乱成绩记录与排行插件", "1.1.0")
+@register("cube_club", "CubeClub", "打乱成绩记录与排行插件", "1.1.1")
 class CubeClubPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
@@ -359,11 +359,30 @@ class CubeClubPlugin(Star):
                 scope = f"comp{year}"
             
             if rk_type == "count":
+                try:
+                    data = RankQuery.get_rank_data(scope, "count")
+                    if data["results"]:
+                        renderer = get_renderer()
+                        png_bytes = renderer.render_rank(data)
+                        
+                        # Save to a temporary file
+                        plugin_data_path = Path(get_astrbot_data_path()) / "plugin_data" / self.name
+                        if not plugin_data_path.exists():
+                            plugin_data_path.mkdir(parents=True, exist_ok=True)
+                        
+                        image_path = plugin_data_path / "temp_rank.png"
+                        image_path.write_bytes(png_bytes)
+                        
+                        yield event.image_result(str(image_path.absolute()))
+                        return
+                except Exception as e:
+                    logger.warning(f"Image generation failed: {e}. Falling back to text.")
+
                 yield event.plain_result(RankQuery.get_rank_list(scope, "count"))
                 return
 
             if len(args) != 2:
-                yield event.plain_result("格式: /rkXXX <项目> <pb|ao5|mo3|aoAll>")
+                yield event.plain_result("格式: /rkX <项目> <pb|ao5|mo3|aoAll>")
                 return
 
             proj, stat = args[0], args[1]
