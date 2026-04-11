@@ -8,7 +8,8 @@ from .constants import ALL_PROJECT_TYPES, OTHER_TYPES
 from .models import Member
 from .rank import RankQuery
 from . import db
-from .time_utils import TimeConvert
+from .time_utils import TimeConvert, format_trend
+from .heatmap import build_heatmap_data, parse_map_parameters
 
 from datetime import datetime, date, timedelta
 import calendar
@@ -139,7 +140,7 @@ class CubeClubPlugin(Star):
     @filter.command("map", alias={"热力图"})
     async def map_heatmap(self, event: AstrMessageEvent):
         try:
-            year, group = self._parse_map_parameters(event.message_str)
+            year, group = parse_map_parameters(event.message_str)
             if not group:
                 qid = event.get_sender_id()
                 sid = Member.get_sid_by_qid(qid)
@@ -165,7 +166,7 @@ class CubeClubPlugin(Star):
                     yield event.plain_result(f"{period_text}暂无个人成绩记录。")
                 return
 
-            data = self._build_heatmap_data(counts, year, month, group)
+            data = build_heatmap_data(counts, year, month, group)
             renderer = get_renderer()
             png_bytes = renderer.render_heatmap(data)
 
@@ -184,134 +185,6 @@ class CubeClubPlugin(Star):
             else:
                 yield event.plain_result("热力图查询失败。")
 
-    def _format_trend(self, old_val, new_val):
-        """Format trend with arrows."""
-        dnf = TimeConvert.DNF_VALUE
-        if new_val is None: return ""
-        
-        tc = TimeConvert.seconds_to_time
-        if old_val is None or old_val >= dnf:
-            # First recording
-            return f"{tc(new_val)}"
-            
-        diff = new_val - old_val
-        if abs(diff) < 0.0001:
-            return f"{tc(new_val)} (-)"
-            
-        arrow = "↓" if diff < 0 else "↑"
-        # 简单使用 emoji，某些环境可能支持 ANSI 颜色，但这里保持通用
-        return f"{tc(new_val)} ({arrow}{abs(diff):.2f})"
-
-    def _parse_map_parameters(self, message: str) -> tuple[int | None, bool]:
-        """Parse `/map` or `/热力图` arguments for optional year and group mode."""
-        args = message.split()[1:]
-        year = None
-        group = False
-        for token in args:
-            lower = token.lower()
-            if lower == "group":
-                group = True
-                continue
-
-            if re.fullmatch(r"\d{2}", token):
-                year = 2000 + int(token)
-            elif re.fullmatch(r"\d{4}", token):
-                year = int(token)
-        return year, group
-
-    def _build_heatmap_data(self, counts: dict[str, int], year: int, month: int | None, group: bool) -> dict:
-        """Prepare heatmap rendering data for monthly or yearly view."""
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        chart_type = "year" if month is None else "month"
-        label = "社团活跃度" if group else "个人活跃度"
-        period_label = f"{year}年" if month is None else f"{year}年{month}月"
-        title = f"{label} 热力图"
-        subtitle = period_label
-
-        if chart_type == "month":
-            start_day = date(year, month, 1)
-            week_start = start_day - timedelta(days=(start_day.weekday() + 1) % 7)
-            next_month = date(year + (month // 12), (month % 12) + 1, 1)
-            final_day = next_month - timedelta(days=1)
-            end_day = final_day + timedelta(days=(6 - ((final_day.weekday() + 1) % 7)))
-        else:
-            start_day = date(year, 1, 1)
-            week_start = start_day - timedelta(days=(start_day.weekday() + 1) % 7)
-            end_day = date(year, 12, 31)
-            end_day = end_day + timedelta(days=(6 - ((end_day.weekday() + 1) % 7)))
-
-        total_weeks = ((end_day - week_start).days // 7) + 1
-        cell_size = 12
-        gap = 4
-        x_spacing = cell_size + gap
-        y_spacing = cell_size + gap
-        max_count = max(counts.values()) if counts else 0
-
-        def bucket_level(value: int) -> int:
-            if value <= 0:
-                return 0
-            if max_count <= 4:
-                return min(value, 4)
-            if value <= max_count * 0.25:
-                return 1
-            if value <= max_count * 0.5:
-                return 2
-            if value <= max_count * 0.75:
-                return 3
-            return 4
-
-        color_map = ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"]
-        cells = []
-        day = week_start
-        while day <= end_day:
-            week_index = (day - week_start).days // 7
-            dow = (day.weekday() + 1) % 7
-            count = counts.get(day.isoformat(), 0)
-            level = bucket_level(count)
-            opacity = 1.0 if chart_type == "year" or day.month == month else 0.3
-            cells.append({
-                "x": 40 + week_index * x_spacing,
-                "y": 80 + dow * y_spacing,
-                "fill": color_map[level],
-                "opacity": opacity,
-                "tooltip": f"{day.isoformat()}：{count} 次",
-                "date": day.isoformat(),
-                "count": count,
-                "current_period": chart_type == "year" or day.month == month,
-            })
-            day += timedelta(days=1)
-
-        month_labels = []
-        if chart_type == "year":
-            for month_index in range(1, 13):
-                month_first = date(year, month_index, 1)
-                week_index = (month_first - week_start).days // 7
-                month_labels.append({
-                    "x": 40 + week_index * x_spacing,
-                    "label": month_first.strftime("%b")
-                })
-
-        legend = [
-            {"color": "#ebedf0", "text": "0"},
-            {"color": "#9be9a8", "text": "1+"},
-            {"color": "#40c463", "text": "2+"},
-            {"color": "#30a14e", "text": "3+"},
-            {"color": "#216e39", "text": "4+"},
-        ]
-
-        width = 40 + total_weeks * x_spacing + 40
-        height = 120 + 7 * y_spacing + 80
-
-        return {
-            "title": title,
-            "subtitle": subtitle,
-            "now": now,
-            "cells": cells,
-            "month_labels": month_labels,
-            "legend": legend,
-            "width": width,
-            "height": height,
-        }
 
     @filter.command(ALL_PROJECT_TYPES[0], alias=set(ALL_PROJECT_TYPES[1:]))
     async def record(self, event: AstrMessageEvent):
@@ -349,7 +222,7 @@ class CubeClubPlugin(Star):
             
             # Trend
             label = ns["label"]
-            trend = self._format_trend(os["cur_avg"], ns["cur_avg"])
+            trend = format_trend(os["cur_avg"], ns["cur_avg"])
             msg += f"\n当前{label}: {trend}"
             
             yield event.plain_result(msg)

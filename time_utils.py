@@ -34,3 +34,21 @@ class TimeConvert:
             return sec_str
         return f"{minutes}:{remaining:05.2f}" # 例如 1:05.20
 
+
+def format_trend(old_val, new_val):
+    """Format trend strings using TimeConvert."""
+    dnf = TimeConvert.DNF_VALUE
+    if new_val is None:
+        return ""
+
+    tc = TimeConvert.seconds_to_time
+    if old_val is None or old_val >= dnf:
+        return f"{tc(new_val)}"
+
+    diff = new_val - old_val
+    if abs(diff) < 0.0001:
+        return f"{tc(new_val)} (-)"
+
+    arrow = "↓" if diff < 0 else "↑"
+    return f"{tc(new_val)} ({arrow}{abs(diff):.2f})"
+
