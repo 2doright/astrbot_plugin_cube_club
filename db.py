@@ -280,3 +280,13 @@ def get_project_count_by_scope(scope: str) -> dict[str, int]:
     conn.close()
     return {r["student_id"]: r["cnt"] for r in rows}
 
+
+def get_project_count_all_scopes() -> dict[str, int]:
+    """Return {student_id: num_distinct_projects} across all scopes."""
+    conn = _connect()
+    rows = conn.execute(
+        "SELECT student_id, COUNT(DISTINCT project) AS cnt FROM attempts GROUP BY student_id"
+    ).fetchall()
+    conn.close()
+    return {r["student_id"]: r["cnt"] for r in rows}
+

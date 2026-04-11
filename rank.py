@@ -119,7 +119,10 @@ class RankQuery:
     @staticmethod
     def _count_rank_data(scope: str) -> dict:
         header = "count-Rank\n"
-        project_counts = db.get_project_count_by_scope(scope)
+        if scope == "all":
+            project_counts = db.get_project_count_all_scopes()
+        else:
+            project_counts = db.get_project_count_by_scope(scope)
 
         if not project_counts:
             return {
