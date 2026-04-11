@@ -59,11 +59,11 @@ def build_heatmap_data(
 
     if chart_type == "month":
         grid_left = 80
-        grid_top = 132
+        grid_top = 104
         min_width = 260
     else:
         grid_left = 60
-        grid_top = 190
+        grid_top = 172
         min_width = 980
 
     def bucket_level(value: int) -> int:
