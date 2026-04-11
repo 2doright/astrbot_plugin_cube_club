@@ -32,9 +32,9 @@ def build_heatmap_data(
     chart_type = "year" if month is None else "month"
     period_label = f"{year}年" if month is None else f"{year}年{month}月"
     if group:
-        title = "社团活跃度"
+        title = "社团"
     else:
-        title = f"{subject_label or '个人'} 活跃度"
+        title = subject_label or "个人"
     subtitle = period_label
 
     if chart_type == "month":
