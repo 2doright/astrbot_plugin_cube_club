@@ -29,6 +29,7 @@ def build_heatmap_data(
 ) -> dict:
     """Prepare heatmap rendering data for monthly or yearly view."""
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    current_time = datetime.now().strftime("%H:%M:%S")
     chart_type = "year" if month is None else "month"
     period_label = f"{year}年" if month is None else f"{year}年{month}月"
     if group:
@@ -128,6 +129,7 @@ def build_heatmap_data(
         "title": title,
         "subtitle": subtitle,
         "now": now,
+        "current_time": current_time,
         "cells": cells,
         "month_labels": month_labels,
         "month_label_y": month_label_y,
